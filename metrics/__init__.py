@@ -57,11 +57,11 @@ class MetricsAbstract(object):
     def _get_hash_key(self, *args):
         return ':'.join(map(str, args))
 
-    def _increment_by(self, key):
+    def _increment_by(self, key, amount=1):
         """
         Incrementing value by specified key
         """
-        return self.redis.incrby(self._get_redis_key(key))
+        return self.redis.incrby(self._get_redis_key(key), amount)
 
     def _get_count_by(self, key):
         """
@@ -377,6 +377,12 @@ class TotalMetrics(MetricsAbstract):
 
     def save_goal(self):
         self._increment_by(self.goals_key)
+
+    def clean_up_variant(self, unique, goals):
+        if unique:
+            self._increment_by(self.unique_key, '-%d' % unique)
+        if goals:
+            self._increment_by(self.goals_key, '-%d' % goals)
 
     def clean_up(self):
         self._del_by(self.unique_key)
