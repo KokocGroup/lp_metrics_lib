@@ -337,3 +337,48 @@ class TariffStats(MetricsAbstract):
             self.variant_id = profile
             key = self._get_redis_key(self.tariff_key)
             self.redis.delete(key)
+
+
+class TotalMetrics(MetricsAbstract):
+    """
+    Class for save total counters for page to view on /pages/
+    """
+    namespace = 'total_metrics'
+
+    conversion_key = ('count', 0,)
+    unique_key = ('count', 1,)
+    goals_key = ('count', 2,)
+    details_key = ('count_details',)
+
+    def __init__(self, page_id, redis):
+        super(TotalMetrics, self).__init__(page_id, '0000-00-00', redis)
+
+    def get_unique(self):
+        return self._get_count_by(self.unique_key)
+
+    def get_conversions(self):
+        pipe = self.redis.pipeline(transaction=True)
+        pipe.get(self._get_redis_key(self.goals_key))
+        pipe.get(self._get_redis_key(self.unique_key))
+        data = pipe.execute()
+        goals = float(data[0] or 0)
+        unique = float(data[1] or 0)
+        try:
+            conversions = goals / unique * 100.0
+        except ZeroDivisionError:
+            conversions = 0.0
+        return '%0.2f' % conversions
+
+    def get_goals(self):
+        return self._get_count_by(self.goals_key)
+
+    def save_unique(self):
+        self._increment_by(self.unique_key)
+
+    def save_goal(self):
+        self._increment_by(self.goals_key)
+
+    def clean_up(self):
+        self._del_by(self.unique_key)
+        self._del_by(self.goals_key)
+        self._del_by(self.details_key)
