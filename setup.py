@@ -13,7 +13,8 @@ setup(
     include_package_data=True,
     install_requires=[
         'redis==2.8.0',
-        'hiredis==0.1.1'
+        'hiredis==0.1.1',
+        'pytz==2014.3',
     ],
     zip_safe=False,
     classifiers=[

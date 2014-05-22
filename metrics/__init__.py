@@ -3,6 +3,12 @@ __author__ = 'gotlium'
 from json import dumps, loads
 from datetime import datetime, timedelta
 
+from pytz import utc
+
+
+def now():
+    return datetime.utcnow().replace(tzinfo=utc)
+
 
 class MetricsAbstract(object):
     """
@@ -285,7 +291,7 @@ class HourMetrics(MetricsAbstract):
     def __init__(self, variant_id, date_string, redis):
         super(HourMetrics, self).__init__(variant_id, date_string, redis)
 
-        self.time_string = datetime.now().strftime('%H')
+        self.time_string = now().strftime('%H')
 
     def clean_up(self):
         self._del_by(self.hour_key)
@@ -331,7 +337,7 @@ class TariffStats(MetricsAbstract):
         return self._get_count_by(self.tariff_key)
 
     def clean_up(self):
-        previous_mon = (datetime.now() - timedelta(days=31)).strftime('%Y-%m')
+        previous_mon = (now() - timedelta(days=31)).strftime('%Y-%m')
         self.date_string = previous_mon
         for profile in self.get_variants():
             self.variant_id = profile
