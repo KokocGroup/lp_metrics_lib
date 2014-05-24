@@ -289,8 +289,9 @@ class HourMetrics(MetricsAbstract):
     hour_key = ('hour_statistics',)
     namespace = 'hours'
 
-    def __init__(self, variant_id, date_string, redis):
-        super(HourMetrics, self).__init__(variant_id, date_string, redis)
+    def __init__(self, variant_id, date_string, redis, save_variant=True):
+        super(HourMetrics, self).__init__(
+            variant_id, date_string, redis, save_variant)
 
         self.time_string = now().strftime('%H')
 
