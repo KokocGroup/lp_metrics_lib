@@ -17,9 +17,10 @@ class MetricsAbstract(object):
     variants_key = 'variants'
     namespace = 'metrics'
 
-    def __init__(self, variant_id, date_string, redis):
+    def __init__(self, variant_id, date_string, redis, save_variant=True):
         self.variant_id = variant_id
         self.date_string = date_string
+        self.save_variant = save_variant
 
         self.redis = redis
         self._save_variants()
@@ -36,7 +37,7 @@ class MetricsAbstract(object):
         For every call, variant will be stored.
         That need for sync data with database, without scanning by all variants
         """
-        if self.variant_id:
+        if self.variant_id and self.save_variant:
             self.redis.hset(self.__get_variants_key(), self.variant_id, '')
 
     def _get_redis_key(self, args):
@@ -356,8 +357,9 @@ class TotalMetrics(MetricsAbstract):
     goals_key = ('count', 2,)
     details_key = ('count_details',)
 
-    def __init__(self, page_id, redis):
-        super(TotalMetrics, self).__init__(page_id, '0000-00-00', redis)
+    def __init__(self, page_id, redis, save_variant=True):
+        super(TotalMetrics, self).__init__(
+            page_id, '0000-00-00', redis, save_variant)
 
     def get_unique(self):
         return self._get_count_by(self.unique_key)
