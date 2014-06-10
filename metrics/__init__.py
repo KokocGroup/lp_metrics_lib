@@ -293,6 +293,7 @@ class UtmMetrics(MetricsAbstract):
 
             self.data[channel].update(self._get_counter_key(
                 channel_type, channel_count))
+            self.data[channel].update(self._get_utm_additional(channel_data))
 
     def _save_utm(self):
         if self.variant_id and self.channel_id:
