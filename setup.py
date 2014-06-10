@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='django-metrics',
-    version='0.1.1',
+    version='0.2',
     description='django metrics',
     keywords="django metrics",
     long_description=open('README.rst').read(),

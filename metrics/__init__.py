@@ -115,6 +115,7 @@ class VisitorMetrics(MetricsAbstract):
     unique_key = ('count', 1,)
     goals_key = ('count', 2,)
     details_key = ('count_details',)
+    additional_key = ('count_additional',)
 
     def get_unique(self):
         return self._get_count_by(self.unique_key)
@@ -124,6 +125,9 @@ class VisitorMetrics(MetricsAbstract):
 
     def get_goals(self):
         return self._get_count_by(self.goals_key)
+
+    def get_additional_key(self):
+        return self.redis.hgetall(self._get_redis_key(self.additional_key))
 
     def get_details(self):
         data = self.redis.lrange(self._get_redis_key(self.details_key), 0, -1)
@@ -142,11 +146,17 @@ class VisitorMetrics(MetricsAbstract):
     def save_goal(self):
         self._increment_by(self.goals_key)
 
+    def save_additional(self, **kwargs):
+        if kwargs.get('ad_id') and kwargs.get('ad_type'):
+            key = '%(ad_id)s:%(ad_type)s:%(ad_label)s' % kwargs
+            self.redis.hincrby(self._get_redis_key(self.additional_key), key)
+
     def clean_up(self):
         self._del_by(self.visits_key)
         self._del_by(self.unique_key)
         self._del_by(self.goals_key)
         self._del_by(self.details_key)
+        self._del_by(self.additional_key)
 
 
 class UtmMetrics(MetricsAbstract):
@@ -154,6 +164,9 @@ class UtmMetrics(MetricsAbstract):
     utm_medium_key = ('utm_medium',)
     utm_campaign_key = ('utm_campaign',)
     utm_term_key = ('utm_term',)
+    utm_additional_keys_key = ('utm_additional_keys',)
+    utm_additional_key = ('utm_additional',)
+    additional_struct = ('id', 'type', 'label', 'count')
 
     def __init__(self, *args, **kwargs):
         super(UtmMetrics, self).__init__(*args, **kwargs)
@@ -161,11 +174,31 @@ class UtmMetrics(MetricsAbstract):
         self.channel_id = None
         self.utm_params = None
         self.count_type = None
+        self.additional_params = None
 
         self.utm_medium = None
         self.utm_campaign = None
 
         self.data = dict()
+
+    def __get_additional_name(self, name):
+        return self._get_redis_key([self.utm_additional_keys_key[0], name])
+
+    def __save_utm_additional(self, name):
+        params = self.additional_params
+        if params.get('ad_id') and params.get('ad_type'):
+            key = name + '-%(ad_id)s:%(ad_type)s:%(ad_label)s' % params
+            self.redis.sadd(self.__get_additional_name(name), key)
+            self._hash_increment_by(self.utm_additional_key, key)
+
+    def __get_utm_additional(self, name):
+        data = []
+        for key in self.redis.smembers(self.__get_additional_name(name)):
+            cnt_key = self._get_redis_key(self.utm_additional_key)
+            count = [self.redis.hget(cnt_key, key)]
+            values = key.split('-')[1].split(':') + count
+            data.append(dict(zip(self.additional_struct, values)))
+        return {'additional': data}
 
     def _save_utm_term(self):
         utm_terms = self.utm_params.get('utm_term')
@@ -177,6 +210,7 @@ class UtmMetrics(MetricsAbstract):
                         term, self.utm_campaign, self.utm_medium,
                         self.channel_id, self.count_type)
                     self._hash_increment_by(self.utm_term_key, key)
+                    self.__save_utm_additional(key)
 
     def _save_utm_campaign(self):
         self.utm_campaign = self.utm_params.get('utm_campaign')
@@ -184,6 +218,7 @@ class UtmMetrics(MetricsAbstract):
             key = self._get_hash_key(
                 self.utm_campaign, self.utm_medium,
                 self.channel_id, self.count_type)
+            self.__save_utm_additional(key)
             return self._hash_increment_by(self.utm_campaign_key, key)
 
     def _save_utm_medium(self):
@@ -191,10 +226,12 @@ class UtmMetrics(MetricsAbstract):
         if self.utm_medium:
             key = self._get_hash_key(
                 self.utm_medium, self.channel_id, self.count_type)
+            self.__save_utm_additional(key)
             return self._hash_increment_by(self.utm_medium_key, key)
 
     def _save_channel(self):
         key = self._get_hash_key(self.channel_id, self.count_type)
+        self.__save_utm_additional(key)
         return self._hash_increment_by(self.utm_channel_key, key)
 
     def _get_utm_terms(self):
@@ -206,6 +243,8 @@ class UtmMetrics(MetricsAbstract):
 
             self.data[channel]['utm_medium'][medium]['utm_campaign'][campaign]['terms'][term].update(
                 self._get_counter_key(count_type, term_count))
+            self.data[channel]['utm_medium'][medium]['utm_campaign'][campaign]['terms'][term].update(
+                self.__get_utm_additional(term_key))
 
     def _get_utm_campaign(self):
         utm_campaign = self._hash_get_by(self.utm_campaign_key)
@@ -217,6 +256,8 @@ class UtmMetrics(MetricsAbstract):
 
             self.data[channel]['utm_medium'][medium]['utm_campaign'][campaign].update(
                 self._get_counter_key(count_type, campaign_count))
+            self.data[channel]['utm_medium'][medium]['utm_campaign'][campaign].update(
+                self.__get_utm_additional(campaign_key))
 
     def _get_utm_medium(self):
         utm_medium = self._hash_get_by(self.utm_medium_key)
@@ -227,6 +268,8 @@ class UtmMetrics(MetricsAbstract):
 
             self.data[channel]['utm_medium'][medium].update(
                 self._get_counter_key(count_type, medium_count))
+            self.data[channel]['utm_medium'][medium].update(
+                self.__get_utm_additional(medium_key))
 
     def _get_utm_channel(self):
         utm_channel = self._hash_get_by(self.utm_channel_key)
@@ -260,6 +303,9 @@ class UtmMetrics(MetricsAbstract):
         self._del_by(self.utm_medium_key)
         self._del_by(self.utm_campaign_key)
         self._del_by(self.utm_term_key)
+        # todo: remove utm_additional_key with some keys
+        self._del_by(self.utm_additional_key)
+        self._del_by(self.utm_additional_keys_key)
 
     def get_utm(self):
         self._get_utm_channel()
@@ -268,21 +314,22 @@ class UtmMetrics(MetricsAbstract):
         self._get_utm_terms()
         return self.data
 
-    def save_utm(self, channel_id=None, utm_params=None, count_type=0):
+    def save_utm(self, channel_id, utm_params, additional_params, count_type=0):
         self.channel_id = channel_id
         self.utm_params = utm_params
         self.count_type = count_type
+        self.additional_params = additional_params
 
         self._encode_params()
         self._save_utm()
 
     def save_visit_with_utm(self, is_unique, channel_id=None, utm_params=None):
         if is_unique:
-            self.save_utm(channel_id, utm_params, 1)
-        self.save_utm(channel_id, utm_params, 0)
+            self.save_utm(channel_id, utm_params, None, 1)
+        self.save_utm(channel_id, utm_params, None,0)
 
-    def save_utm_goal(self, channel_id, utm_params):
-        self.save_utm(channel_id, utm_params, 2)
+    def save_utm_goal(self, channel_id, utm_params, additional_params):
+        self.save_utm(channel_id, utm_params, additional_params, 2)
 
 
 class HourMetrics(MetricsAbstract):
