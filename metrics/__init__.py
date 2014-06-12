@@ -193,7 +193,7 @@ class UtmMetrics(MetricsAbstract):
 
     def _save_utm_additional(self, name):
         params = self.additional_params
-        if params.get('ad_id') and params.get('ad_type'):
+        if params and params.get('ad_id') and params.get('ad_type'):
             key = name + '-%(ad_id)s:%(ad_type)s:%(ad_label)s' % params
             self.redis.sadd(self.__get_additional_name(name), key)
             self._hash_increment_by(self.utm_additional_key, key)
@@ -325,7 +325,8 @@ class UtmMetrics(MetricsAbstract):
         self._get_utm_terms()
         return self.data
 
-    def save_utm(self, channel_id, utm_params, additional_params, count_type=0):
+    def save_utm(self, channel_id, utm_params,
+                 additional_params, count_type=0):
         self.channel_id = channel_id
         self.utm_params = utm_params
         self.count_type = count_type
