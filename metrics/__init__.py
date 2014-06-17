@@ -338,7 +338,7 @@ class UtmMetrics(MetricsAbstract):
     def save_visit_with_utm(self, is_unique, channel_id=None, utm_params=None):
         if is_unique:
             self.save_utm(channel_id, utm_params, None, 1)
-        self.save_utm(channel_id, utm_params, None,0)
+        self.save_utm(channel_id, utm_params, None, 0)
 
     def save_utm_goal(self, channel_id, utm_params, additional_params):
         self.save_utm(channel_id, utm_params, additional_params, 2)
@@ -447,9 +447,9 @@ class TotalMetrics(MetricsAbstract):
         self._increment_by(self.goals_key)
 
     def clean_up_variant(self, unique, goals):
-        if unique:
+        if unique and int(self.get_unique()) >= unique:
             self._increment_by(self.unique_key, '-%d' % unique)
-        if goals:
+        if goals and int(self.get_goals()) >= goals:
             self._increment_by(self.goals_key, '-%d' % goals)
 
     def clean_up(self):
