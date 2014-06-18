@@ -153,8 +153,8 @@ class VisitorMetrics(MetricsAbstract):
                 self._get_redis_key(self.geo_goals_key), ip)
             data.append({
                 'ip': ip,
-                'unique': unique,
-                'goals': goals,
+                'unique': int(unique or 0),
+                'goals': int(goals or 0),
             })
         return data
 

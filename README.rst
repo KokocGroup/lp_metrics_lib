@@ -14,7 +14,7 @@ VisitorMetrics
 
     date = '2014-06-18'
     redis = RedisMetricsClient()
-    variant_id = 1
+    variant_id = 34924
     data_values = [
         '91.195.136.52',
         time(),
@@ -66,7 +66,7 @@ HourMetrics
 
     date = '2014-06-18'
     redis = RedisMetricsClient()
-    variant_id = 1
+    variant_id = 34924
 
     # Initialize metrics for defined date and page
     hour = HourMetrics(variant_id, date, redis)
@@ -98,7 +98,7 @@ TotalMetrics
     from metrics  import TotalMetrics
 
     redis = RedisMetricsClient()
-    page_id = 1
+    page_id = 28025
 
     # Initialize metrics for defined date and profile
     total = TotalMetrics(page_id, redis)
@@ -151,7 +151,7 @@ UtmMetrics
 
     redis = RedisMetricsClient()
     date = '2014-06-18'
-    variant_id = 1
+    variant_id = 34924
     channel_id = 1
 
     utm_params = {
