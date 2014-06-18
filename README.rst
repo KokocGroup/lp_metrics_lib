@@ -46,7 +46,7 @@ VisitorMetrics
     # Get visits detailed information
     print [d for d in visitor.get_details()]
 
-    # Get get information
+    # Get geo information
     print visitor.get_geo()
 
     # Get all used variants
