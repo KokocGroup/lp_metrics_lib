@@ -117,6 +117,8 @@ class VisitorMetrics(MetricsAbstract):
     visits_key = ('count', 0,)
     unique_key = ('count', 1,)
     goals_key = ('count', 2,)
+    geo_goals_key = ('count_geo_goals',)
+    geo_unique_key = ('count_geo_unique',)
     details_key = ('count_details',)
     additional_key = ('count_additional',)
 
@@ -143,16 +145,40 @@ class VisitorMetrics(MetricsAbstract):
         for line in data:
             yield dict(zip(keys, loads(line)))
 
-    def save_visitor(self, unique, data):
-        if unique > 0:
-            self._increment_by(self.unique_key)
-            self.redis.lpush(
-                self._get_redis_key(self.details_key), dumps(data))
+    def get_geo(self):
+        keys = self.redis.hgetall(self._get_redis_key(self.geo_unique_key))
+        data = []
+        for ip, unique in keys.items():
+            goals = self.redis.hget(
+                self._get_redis_key(self.geo_goals_key), ip)
+            data.append({
+                'ip': ip,
+                'unique': unique,
+                'goals': goals,
+            })
+        return data
 
+    def _save_details(self, data):
+        self.redis.lpush(
+            self._get_redis_key(self.details_key), dumps(data))
+
+    def _save_geo(self, data, is_goal=0):
+        if not is_goal:
+            self.redis.hincrby(
+                self._get_redis_key(self.geo_unique_key), data[0], 1)
+        self.redis.hincrby(
+            self._get_redis_key(self.geo_goals_key), data[0], is_goal)
+
+    def save_visitor(self, is_unique, data):
+        if is_unique > 0:
+            self._increment_by(self.unique_key)
+            self._save_details(data)
+            self._save_geo(data)
         self._increment_by(self.visits_key)
 
-    def save_goal(self):
+    def save_goal(self, data):
         self._increment_by(self.goals_key)
+        self._save_geo(data, is_goal=1)
 
     def save_additional(self, **kwargs):
         if kwargs.get('ad_id') and kwargs.get('ad_type'):
@@ -165,6 +191,8 @@ class VisitorMetrics(MetricsAbstract):
         self._del_by(self.goals_key)
         self._del_by(self.details_key)
         self._del_by(self.additional_key)
+        self._del_by(self.geo_goals_key)
+        self._del_by(self.geo_unique_key)
 
 
 class UtmMetrics(MetricsAbstract):

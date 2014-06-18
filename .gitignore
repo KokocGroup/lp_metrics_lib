@@ -16,3 +16,4 @@ cache
 uwsgi-local.sh
 local_settings.py
 settings_local.py
+*.egg-info
