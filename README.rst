@@ -68,9 +68,9 @@ HourMetrics
     redis = RedisMetricsClient()
     variant_id = 1
 
-    # Initialize metrics for defined date and page variant
+    # Initialize metrics for defined date and page
     hour = HourMetrics(variant_id, date, redis)
-    # Get information about unique, visits and goals
+    # Get information about hours stats
     print hour.get_hours_stats()
 
     # Save unique visit
@@ -100,7 +100,7 @@ TotalMetrics
     redis = RedisMetricsClient()
     page_id = 1
 
-    # Initialize metrics for defined date and page variant
+    # Initialize metrics for defined date and profile
     total = TotalMetrics(page_id, redis)
 
     # Save unique visit
@@ -111,7 +111,7 @@ TotalMetrics
     total.save_goal()
     print total.get_goals()
 
-    # Get conversion
+    # Get page conversion
     print total.get_conversions()
 
     # Flush all total visits data
