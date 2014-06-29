@@ -415,12 +415,15 @@ class HourMetrics(MetricsAbstract):
 
 
 class TariffStats(MetricsAbstract):
+    """
+    Class for track only unique visits for current month
+    """
     variants_key = 'profiles'
     namespace = 'stats'
     tariff_key = ('tariff',)
 
     def save_unique(self):
-        return self.redis.incrby(self._get_redis_key(self.tariff_key))
+        return self._increment_by(self.tariff_key)
 
     def get_unique(self):
         return self._get_count_by(self.tariff_key)

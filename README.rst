@@ -9,10 +9,11 @@ VisitorMetrics
 
     from metrics.redis_wrapper import RedisMetricsClient
     from metrics  import VisitorMetrics
+    from datetime import datetime
     from time import time
 
 
-    date = '2014-06-18'
+    date = datetime.now().strftime('%Y-%m-%d')
     redis = RedisMetricsClient()
     variant_id = 34924
     data_values = [
@@ -63,8 +64,9 @@ HourMetrics
 
     from metrics.redis_wrapper import RedisMetricsClient
     from metrics  import HourMetrics
+    from datetime import datetime
 
-    date = '2014-06-18'
+    date = datetime.now().strftime('%Y-%m-%d')
     redis = RedisMetricsClient()
     variant_id = 34924
 
@@ -125,9 +127,10 @@ TariffStats
 
     from metrics.redis_wrapper import RedisMetricsClient
     from metrics  import TariffStats
+    from datetime import datetime
 
     redis = RedisMetricsClient()
-    date = '2014-06-18'
+    date = datetime.now().strftime('%Y-%m-%d')
     profile_id = 1
 
     # Initialize metrics for defined date and page variant
@@ -148,11 +151,13 @@ UtmMetrics
 
     from metrics.redis_wrapper import RedisMetricsClient
     from metrics  import UtmMetrics
+    from datetime import datetime
 
     redis = RedisMetricsClient()
-    date = '2014-06-18'
+    date = datetime.now().strftime('%Y-%m-%d')
     variant_id = 34924
     channel_id = 1
+    is_unique = 1
 
     utm_params = {
         'utm_medium': 'cpc',
@@ -170,7 +175,7 @@ UtmMetrics
     print utm.get_utm()
 
     # Save utm unique visit
-    utm.save_visit_with_utm(1, channel_id, utm_params)
+    utm.save_visit_with_utm(is_unique, channel_id, utm_params)
     print utm.get_utm()
 
     # Save utm goal
