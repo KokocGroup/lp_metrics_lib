@@ -186,8 +186,8 @@ UtmMetrics
     utm.flush_db()
 
 
-Simple data
------------
+Simple data for development
+---------------------------
 
 .. code-block:: python
 
