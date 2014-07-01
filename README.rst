@@ -185,3 +185,17 @@ UtmMetrics
     # Flush all utm data
     utm.flush_db()
 
+
+Simple data
+-----------
+
+.. code-block:: python
+
+    # save all
+    from metrics import TestData; TestData().save()
+
+    # flush all
+    from metrics import TestData; TestData().flush()
+
+    # show all
+    from metrics import TestData; TestData().show()
