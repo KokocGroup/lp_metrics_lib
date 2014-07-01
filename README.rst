@@ -1,5 +1,5 @@
-Site metrics
-============
+LPG Metrics high-speed statistics storage
+=========================================
 
 
 VisitorMetrics
@@ -166,7 +166,7 @@ UtmMetrics
     }
     additional_params = {
         'ad_label': 'Форма',
-        'ad_type': 1,
+        'ad_type': 1, # 1 - form; 2 - link
         'ad_id': 10,
     }
 
