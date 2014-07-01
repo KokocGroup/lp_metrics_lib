@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 __author__ = 'gotlium'
+__version__ = '1.0'
 
 from json import dumps, loads
 from datetime import datetime, timedelta
