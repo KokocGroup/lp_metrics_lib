@@ -229,7 +229,8 @@ class UtmMetrics(MetricsAbstract):
         params = self.additional_params
         if params and params.get('ad_id') and params.get('ad_type'):
             if self.count_type == 2:
-                key = name + '-%(ad_id)s:%(ad_type)s:%(ad_label)s' % params
+                key = name + '-||-%(ad_id)s-:-' \
+                             '%(ad_type)s-:-%(ad_label)s' % params
                 self.redis.sadd(self.__get_additional_name(name), key)
                 self._hash_increment_by(self.utm_additional_key, key)
 
@@ -238,7 +239,7 @@ class UtmMetrics(MetricsAbstract):
         for key in self.redis.smembers(self.__get_additional_name(name)):
             cnt_key = self._get_redis_key(self.utm_additional_key)
             count = [self.redis.hget(cnt_key, key)]
-            values = key.split('-')[1].split(':') + count
+            values = key.split('-||-')[1].split('-:-') + count
             data.append(dict(zip(ADDITIONAL_STRUCT, values)))
         return {'additional': data}
 
