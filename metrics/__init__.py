@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 __author__ = 'gotlium'
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 
 from json import dumps, loads
 from datetime import datetime, timedelta
@@ -235,11 +235,15 @@ class UtmMetrics(MetricsAbstract):
 
     def _get_utm_additional(self, name):
         data = []
-        for key in self.redis.smembers(self.__get_additional_name(name)):
-            cnt_key = self._get_redis_key(self.utm_additional_key)
-            count = [self.redis.hget(cnt_key, key)]
-            values = key.split('-||-')[1].split(':') + count
-            data.append(dict(zip(ADDITIONAL_STRUCT, values)))
+        # todo: remove try-except tomorrow
+        try:
+            for key in self.redis.smembers(self.__get_additional_name(name)):
+                cnt_key = self._get_redis_key(self.utm_additional_key)
+                count = [self.redis.hget(cnt_key, key)]
+                values = key.split('-||-')[1].split(':') + count
+                data.append(dict(zip(ADDITIONAL_STRUCT, values)))
+        except:
+            pass
         return {'additional': data}
 
     def _del_utm_additional(self):
