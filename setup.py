@@ -12,8 +12,8 @@ setup(
     packages=find_packages(exclude=['demo']),
     include_package_data=True,
     install_requires=[
-        'redis==2.8.0',
-        'hiredis==0.1.1',
+        'redis>=2.8.0',
+        'hiredis>=0.1.1',
         'pytz==2014.3',
     ],
     zip_safe=False,
