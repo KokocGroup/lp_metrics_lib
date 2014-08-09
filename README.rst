@@ -11,6 +11,7 @@ VisitorMetrics
     from metrics  import VisitorMetrics
     from datetime import datetime
     from time import time
+    from pprintpp import pprint
 
 
     date = datetime.now().strftime('%Y-%m-%d')
@@ -25,33 +26,33 @@ VisitorMetrics
     # Initialize metrics for defined date and page variant
     visitor = VisitorMetrics(variant_id, date, redis)
     # Get information about unique, visits and goals
-    print visitor.get_unique(), visitor.get_visits(), visitor.get_goals()
+    print(visitor.get_unique(), visitor.get_visits(), visitor.get_goals())
 
     # Save unique visit
     visitor.save_visitor(is_unique=1, data=data_values)
-    print visitor.get_unique(), visitor.get_visits(), visitor.get_goals()
+    print(visitor.get_unique(), visitor.get_visits(), visitor.get_goals())
 
     # Save not unique visit
     visitor.save_visitor(is_unique=0, data=data_values)
-    print visitor.get_unique(), visitor.get_visits(), visitor.get_goals()
+    print(visitor.get_unique(), visitor.get_visits(), visitor.get_goals())
 
     # Save goal
     visitor.save_goal(data=data_values)
-    print visitor.get_unique(), visitor.get_visits(), visitor.get_goals()
+    print(visitor.get_unique(), visitor.get_visits(), visitor.get_goals())
 
     # Save some additional params
     visitor.save_additional(ad_id=1, ad_type=1, ad_label='form')
     # Get all additional info for current variant
-    print visitor.get_additional_list()
+    pprint(visitor.get_additional_list())
 
     # Get visits detailed information
-    print [d for d in visitor.get_details()]
+    pprint([d for d in visitor.get_details()])
 
     # Get geo information
-    print visitor.get_geo()
+    pprint(visitor.get_geo())
 
     # Get all used variants
-    print visitor.get_variants()
+    pprint(visitor.get_variants())
 
     # Flush all visits data
     visitor.flush_db()
@@ -65,6 +66,8 @@ HourMetrics
     from metrics.redis_wrapper import RedisMetricsClient
     from metrics  import HourMetrics
     from datetime import datetime
+    from pprintpp import pprint
+
 
     date = datetime.now().strftime('%Y-%m-%d')
     redis = RedisMetricsClient()
@@ -73,19 +76,19 @@ HourMetrics
     # Initialize metrics for defined date and page
     hour = HourMetrics(variant_id, date, redis)
     # Get information about hours stats
-    print hour.get_hours_stats()
+    pprint(hour.get_hours_stats())
 
     # Save unique visit
     hour.save_visitor(is_unique=1)
-    print hour.get_hours_stats()
+    pprint(hour.get_hours_stats())
 
     # Save lead
     hour.save_lead()
-    print hour.get_hours_stats()
+    pprint(hour.get_hours_stats())
 
     # Save goal
     hour.save_goal()
-    print hour.get_hours_stats()
+    pprint(hour.get_hours_stats())
 
     # Flush all hours data
     hour.flush_db()
@@ -98,6 +101,8 @@ TotalMetrics
 
     from metrics.redis_wrapper import RedisMetricsClient
     from metrics  import TotalMetrics
+    from pprintpp import pprint
+
 
     redis = RedisMetricsClient()
     page_id = 28025
@@ -107,14 +112,14 @@ TotalMetrics
 
     # Save unique visit
     total.save_unique()
-    print total.get_unique()
+    pprint(total.get_unique())
 
     # Save lead
     total.save_goal()
-    print total.get_goals()
+    pprint(total.get_goals())
 
     # Get page conversion
-    print total.get_conversions()
+    pprint(total.get_conversions())
 
     # Flush all total visits data
     total.flush_db()
@@ -128,6 +133,8 @@ TariffStats
     from metrics.redis_wrapper import RedisMetricsClient
     from metrics  import TariffStats
     from datetime import datetime
+    from pprintpp import pprint
+
 
     redis = RedisMetricsClient()
     date = datetime.now().strftime('%Y-%m-%d')
@@ -138,7 +145,7 @@ TariffStats
 
     # Save unique visit
     tariff.save_unique()
-    print tariff.get_unique()
+    pprint(tariff.get_unique())
 
     # Flush all tariff data
     tariff.flush_db()
@@ -152,6 +159,8 @@ UtmMetrics
     from metrics.redis_wrapper import RedisMetricsClient
     from metrics  import UtmMetrics
     from datetime import datetime
+    from pprintpp import pprint
+
 
     redis = RedisMetricsClient()
     date = datetime.now().strftime('%Y-%m-%d')
@@ -166,21 +175,21 @@ UtmMetrics
     }
     additional_params = {
         'ad_label': 'Форма',
-        'ad_type': 1, # 1 - form; 2 - link
+        'ad_type': 1, # 1 - form; 2 - link; 3 - payments
         'ad_id': 10,
     }
 
     # Initialize metrics for defined date and page variant
     utm = UtmMetrics(variant_id, date, redis)
-    print utm.get_utm()
+    pprint(utm.get_utm())
 
     # Save utm unique visit
     utm.save_visit_with_utm(is_unique, channel_id, utm_params)
-    print utm.get_utm()
+    pprint(utm.get_utm())
 
     # Save utm goal
     utm.save_utm_goal(channel_id, utm_params, additional_params)
-    print utm.get_utm()
+    pprint(utm.get_utm())
 
     # Flush all utm data
     utm.flush_db()
