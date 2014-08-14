@@ -1,8 +1,10 @@
 from setuptools import setup, find_packages
+from metrics import __version__
+
 
 setup(
     name='django-metrics',
-    version='0.2',
+    version=__version__,
     description='django metrics',
     keywords="django metrics",
     long_description=open('README.rst').read(),
@@ -14,7 +16,7 @@ setup(
     install_requires=[
         'redis>=2.8.0',
         'hiredis>=0.1.1',
-        'pytz==2014.3',
+        'pytz==2014.4',
     ],
     zip_safe=False,
     classifiers=[

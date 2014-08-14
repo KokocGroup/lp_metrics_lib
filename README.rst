@@ -45,6 +45,15 @@ VisitorMetrics
     # Get all additional info for current variant
     pprint(visitor.get_additional_list())
 
+    # Decrease goal
+    visitor.decrease_goal(data=data_values)
+    print(visitor.get_unique(), visitor.get_visits(), visitor.get_goals())
+
+    # Decrease some additional params
+    visitor.decrease_additional(ad_id=1, ad_type=1, ad_label='form')
+    # Get all additional info for current variant
+    pprint(visitor.get_additional_list())
+
     # Get visits detailed information
     pprint([d for d in visitor.get_details()])
 
@@ -90,6 +99,14 @@ HourMetrics
     hour.save_goal()
     pprint(hour.get_hours_stats())
 
+    # Decrease lead
+    hour.decrease_lead()
+    pprint(hour.get_hours_stats())
+
+    # Decrease goal
+    hour.decrease_goal()
+    pprint(hour.get_hours_stats())
+
     # Flush all hours data
     hour.flush_db()
 
@@ -116,6 +133,10 @@ TotalMetrics
 
     # Save lead
     total.save_goal()
+    pprint(total.get_goals())
+
+    # Save lead
+    total.decrease_goal()
     pprint(total.get_goals())
 
     # Get page conversion
@@ -191,6 +212,10 @@ UtmMetrics
     utm.save_utm_goal(channel_id, utm_params, additional_params)
     pprint(utm.get_utm())
 
+    # Save lead
+    utm.decrease_utm_goal(channel_id, utm_params, additional_params)
+    pprint(utm.get_utm())
+
     # Flush all utm data
     utm.flush_db()
 
@@ -201,10 +226,10 @@ Simple data for development
 .. code-block:: python
 
     # save all
-    from metrics import TestData; TestData().save()
+    from metrics.testing import TestData; TestData().save()
 
     # flush all
-    from metrics import TestData; TestData().flush()
+    from metrics.testing import TestData; TestData().flush()
 
     # show all
-    from metrics import TestData; TestData().show()
+    from metrics.testing import TestData; TestData().show()
