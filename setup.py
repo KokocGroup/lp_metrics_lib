@@ -1,5 +1,4 @@
 from setuptools import setup, find_packages
-from metrics import __version__
 
 
 setup(
