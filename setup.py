@@ -4,7 +4,7 @@ from metrics import __version__
 
 setup(
     name='django-metrics',
-    version=__version__,
+    version='1.1',
     description='django metrics',
     keywords="django metrics",
     long_description=open('README.rst').read(),
