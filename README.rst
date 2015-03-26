@@ -196,7 +196,7 @@ UtmMetrics
     }
     additional_params = {
         'ad_label': 'Форма',
-        'ad_type': 1, # 1 - form; 2 - link; 3 - payments; 4 - calls
+        'ad_type': 1, # 1 - form; 2 - link; 3 - payments; 4 - calls, 5 - chats
         'ad_id': 10,
     }
 
