@@ -254,7 +254,7 @@ class UtmMetrics(MetricsAbstract):
                 values = key.split('-||-')[1].split(':') + count
                 data.append(dict(zip(ADDITIONAL_STRUCT, values)))
         except Exception as exc:
-            print '[ad-utm]', exc.__str__()
+            print('[ad-utm]', exc.__str__())
         return {'additional': data}
 
     def _del_utm_additional(self):

@@ -49,40 +49,40 @@ class TestData(object):
         self.utm .flush_db()
 
     def show(self):
-        print '*'*25
-        print 'Visits:'
-        print '*'*25
-        print 'unique:', self.visitor.get_unique()
-        print 'visits:', self.visitor.get_visits()
-        print 'goals:', self.visitor.get_goals()
-        print 'additional:', self.visitor.get_additional_list()
-        print 'details:', self.visitor.get_details()
-        print 'geo:', self.visitor.get_geo()
-        print 'variants:', self.visitor.get_variants()
+        print('*'*25)
+        print('Visits:')
+        print('*'*25)
+        print('unique:', self.visitor.get_unique())
+        print('visits:', self.visitor.get_visits())
+        print('goals:', self.visitor.get_goals())
+        print('additional:', self.visitor.get_additional_list())
+        print('details:', self.visitor.get_details())
+        print('geo:', self.visitor.get_geo())
+        print('variants:', self.visitor.get_variants())
 
-        print ""
+        print("")
 
-        print '*'*25
-        print 'Hours:'
-        print '*'*25
-        print 'stats:', self.hour.get_hours_stats()
+        print('*'*25)
+        print('Hours:')
+        print('*'*25)
+        print('stats:', self.hour.get_hours_stats())
 
-        print '*'*25
-        print 'Total:'
-        print '*'*25
-        print 'unique:', self.total.get_unique()
-        print 'goals:', self.total.get_goals()
-        print 'conversions:', self.total.get_conversions()
+        print('*'*25)
+        print('Total:')
+        print('*'*25)
+        print('unique:', self.total.get_unique())
+        print('goals:', self.total.get_goals())
+        print('conversions:', self.total.get_conversions())
 
-        print '*'*25
-        print 'Tariff:'
-        print '*'*25
-        print 'unique', self.tariff.get_unique()
+        print('*'*25)
+        print('Tariff:')
+        print('*'*25)
+        print('unique', self.tariff.get_unique())
 
-        print '*'*25
-        print 'Utm:'
-        print '*'*25
-        print 'utm', self.utm.get_utm()
+        print('*'*25)
+        print('Utm:')
+        print('*'*25)
+        print('utm', self.utm.get_utm())
 
     def save_visitors(self):
         self.visitor.save_visitor(is_unique=1, data=self.data_values)
