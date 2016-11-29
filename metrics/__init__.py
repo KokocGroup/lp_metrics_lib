@@ -253,8 +253,8 @@ class UtmMetrics(MetricsAbstract):
                 count = [self.redis.hget(cnt_key, key)]
                 values = key.split('-||-')[1].split(':') + count
                 data.append(dict(zip(ADDITIONAL_STRUCT, values)))
-        except Exception, msg:
-            print '[ad-utm]', msg.__str__()
+        except Exception as exc:
+            print('[ad-utm]', exc.__str__())
         return {'additional': data}
 
     def _del_utm_additional(self):
